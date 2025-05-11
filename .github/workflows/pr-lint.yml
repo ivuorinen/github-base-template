@@ -1,18 +1,30 @@
 ---
-name: PR Lint
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Lint Code Base
 
 on:
   push:
-    branches-ignore: [master, main]
-    # Remove the line above to run when pushing to master
+    branches: [master, main]
   pull_request:
     branches: [master, main]
 
-permissions:
-  contents: read
-  packages: read
-  statuses: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: read-all
 
 jobs:
-  SuperLinter:
-    uses: ivuorinen/.github/.github/workflows/pr-lint.yml@main
+  Linter:
+    name: PR Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      statuses: write
+      contents: read
+      packages: read
+
+    steps:
+      - name: Run PR Lint
+        # https://github.com/ivuorinen/actions
+        uses: ivuorinen/actions/pr-lint@2be873ebc893ab669d11d1848e5bddfe1cb9f828 # 25.5.5

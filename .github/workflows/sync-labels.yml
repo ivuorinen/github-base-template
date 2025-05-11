@@ -1,23 +1,41 @@
 ---
-name: Sync labels
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Sync Labels
 
-# yamllint disable-line rule:truthy
 on:
   push:
     branches:
       - main
+      - master
     paths:
-      - .github/workflows/sync-labels.yml
-      - .github/labels.yml
+      - '.github/labels.yml'
+      - '.github/workflows/sync-labels.yml'
   schedule:
-    - cron: "34 5 * * *"
+    - cron: '34 5 * * *' # Run every day at 05:34 AM UTC
   workflow_call:
   workflow_dispatch:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: read-all
 
 jobs:
-  SyncLabels:
-    permissions:
-      issues: write
+  labels:
+    name: ♻️ Sync Labels
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      issues: write
+
     steps:
-      - uses: ivuorinen/actions/sync-labels@main
+      - name: ⤵️ Checkout Repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: ⤵️ Sync Latest Labels Definitions
+        uses: ivuorinen/actions/sync-labels@2be873ebc893ab669d11d1848e5bddfe1cb9f828 # 25.5.5
