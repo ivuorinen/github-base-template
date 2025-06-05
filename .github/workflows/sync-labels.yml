@@ -38,4 +38,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: ⤵️ Sync Latest Labels Definitions
-        uses: ivuorinen/actions/sync-labels@baed29f713eaa0817982be42681e66511cb092b5 # 25.5.26
+        uses: ivuorinen/actions/sync-labels@261011b054c8747874b0f490f331977dbd081e62 # 25.6.3
